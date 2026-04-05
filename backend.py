@@ -16,7 +16,7 @@ firebase_config = st.secrets["FIREBASE_CONFIG"]
 
 def init_db():
     if not firebase_admin._apps:
-        cred = credentials.Certificate(dict(firebase_config))
+        cred = credentials.Certificate(st.secrets["FIREBASE_CONFIG"])
         firebase_admin.initialize_app(cred)
     return firestore.client()
 
