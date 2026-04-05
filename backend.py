@@ -20,7 +20,13 @@ def init_db():
         firebase_admin.initialize_app(cred)
     return firestore.client()
 
-db = init_db()
+db = None
+
+def get_db():
+    global db
+    if db is None:
+        db = init_db()
+    return db
 
 # -------------------- CREATE NEW CHAT --------------------
 def create_new_chat():
@@ -29,7 +35,7 @@ def create_new_chat():
     Returns the chat_id.
     """
     chat_id = str(uuid.uuid4())
-    db.collection("chats").document(chat_id).set({
+    get_db.collection("chats").document(chat_id).set({
         "name": "New Chat",  # default name
         "created_at": datetime.datetime.utcnow()
     })
@@ -40,7 +46,7 @@ def rename_chat(chat_id, new_name):
     """
     Updates the chat's name.
     """
-    db.collection("chats").document(chat_id).update({
+    get_db.collection("chats").document(chat_id).update({
         "name": new_name
     })
 
@@ -49,7 +55,7 @@ def add_message(chat_id, role, content):
     """
     Adds a message to a chat.
     """
-    db.collection("chats") \
+    get_db.collection("chats") \
       .document(chat_id) \
       .collection("messages") \
       .add({
@@ -63,7 +69,7 @@ def get_all_chats():
     """
     Returns a list of tuples: (chat_id, chat_name), sorted by creation time.
     """
-    chats = db.collection("chats").order_by("created_at").get()
+    chats = get_db.collection("chats").order_by("created_at").get()
     chat_list = []
     for chat in chats:
         data = chat.to_dict()
@@ -76,7 +82,7 @@ def get_messages(chat_id):
     """
     Returns all messages for a given chat, sorted by time.
     """
-    messages = db.collection("chats") \
+    messages = get_db.collection("chats") \
         .document(chat_id) \
         .collection("messages") \
         .order_by("time") \
