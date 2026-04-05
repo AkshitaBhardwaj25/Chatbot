@@ -11,17 +11,13 @@ import json
 api_key = st.secrets["GOOGLE_API_KEY"]
 firebase_config = st.secrets["FIREBASE_CONFIG"]
 
+api_key = st.secrets["GOOGLE_API_KEY"]
+firebase_config = st.secrets["FIREBASE_CONFIG"]
+
 def init_db():
     if not firebase_admin._apps:
-        # FORCE convert string → dict
-        if isinstance(firebase_config, str):
-            firebase_dict = json.loads(firebase_config)
-        else:
-            firebase_dict = firebase_config
-
-        cred = credentials.Certificate(firebase_dict)
+        cred = credentials.Certificate(dict(firebase_config))
         firebase_admin.initialize_app(cred)
-
     return firestore.client()
 
 db = init_db()
