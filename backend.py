@@ -16,8 +16,14 @@ firebase_config = st.secrets["FIREBASE_CONFIG"]
 
 def init_db():
     if not firebase_admin._apps:
-        cred = credentials.Certificate(dict(firebase_config))
+        firebase_dict = json.loads(firebase_config)
+
+        # FIX newline properly
+        firebase_dict["private_key"] = firebase_dict["private_key"].replace("\\n", "\n")
+
+        cred = credentials.Certificate(firebase_dict)
         firebase_admin.initialize_app(cred)
+
     return firestore.client()
 
 db = None
