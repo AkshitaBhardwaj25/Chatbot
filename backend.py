@@ -35,7 +35,7 @@ def create_new_chat():
     Returns the chat_id.
     """
     chat_id = str(uuid.uuid4())
-    get_db.collection("chats").document(chat_id).set({
+    get_db().collection("chats").document(chat_id).set({
         "name": "New Chat",  # default name
         "created_at": datetime.datetime.utcnow()
     })
@@ -46,7 +46,7 @@ def rename_chat(chat_id, new_name):
     """
     Updates the chat's name.
     """
-    get_db.collection("chats").document(chat_id).update({
+    get_db().collection("chats").document(chat_id).update({
         "name": new_name
     })
 
@@ -55,7 +55,7 @@ def add_message(chat_id, role, content):
     """
     Adds a message to a chat.
     """
-    get_db.collection("chats") \
+    get_db().collection("chats") \
       .document(chat_id) \
       .collection("messages") \
       .add({
@@ -69,7 +69,7 @@ def get_all_chats():
     """
     Returns a list of tuples: (chat_id, chat_name), sorted by creation time.
     """
-    chats = get_db.collection("chats").order_by("created_at").get()
+    chats = get_db().collection("chats").order_by("created_at").get()
     chat_list = []
     for chat in chats:
         data = chat.to_dict()
@@ -82,7 +82,7 @@ def get_messages(chat_id):
     """
     Returns all messages for a given chat, sorted by time.
     """
-    messages = get_db.collection("chats") \
+    messages = get_db().collection("chats") \
         .document(chat_id) \
         .collection("messages") \
         .order_by("time") \
