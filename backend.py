@@ -9,13 +9,19 @@ import streamlit as st
 import json
 
 api_key = st.secrets["GOOGLE_API_KEY"]
-firebase_config = os.getenv("FIREBASE_CONFIG") or st.secrets["FIREBASE_CONFIG"]
+firebase_config = st.secrets["FIREBASE_CONFIG"]
 
-# -------------------- FIREBASE --------------------
 def init_db():
     if not firebase_admin._apps:
-        cred = credentials.Certificate(firebase_config)
+        # FORCE convert string → dict
+        if isinstance(firebase_config, str):
+            firebase_dict = json.loads(firebase_config)
+        else:
+            firebase_dict = firebase_config
+
+        cred = credentials.Certificate(firebase_dict)
         firebase_admin.initialize_app(cred)
+
     return firestore.client()
 
 db = init_db()
