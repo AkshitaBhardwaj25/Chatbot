@@ -130,3 +130,9 @@ If you accidentally push credentials, **immediately rotate them**:
 - Gemini: [Google AI Studio](https://aistudio.google.com/app/apikey) → delete and recreate the key
 
 ---
+
+## Author
+
+Developed by **Akshita Bhardwaj**
+
+---
