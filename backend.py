@@ -15,7 +15,11 @@ _db = None  # renamed to avoid shadowing the module-level `db` export
 
 def init_db():
     if not firebase_admin._apps:
-        firebase_dict = json.loads(firebase_config)
+        # Sanitize control characters before parsing — Streamlit secrets can
+        # corrupt the raw newlines inside the private_key string.
+        sanitized = firebase_config.replace("\n", "\\n").replace("\r", "\\r")
+        firebase_dict = json.loads(sanitized)
+        # Restore actual newlines in the private key so the RSA key is valid.
         firebase_dict["private_key"] = firebase_dict["private_key"].replace("\\n", "\n")
         cred = credentials.Certificate(firebase_dict)
         firebase_admin.initialize_app(cred)
